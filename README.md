@@ -1,5 +1,5 @@
 # Click Through Prediction
-## Will they click through?
+## Will they click our ad?
 
 ## Project Description
 In online advertising, click-through rate (CTR) is a very important metric for evaluating ad performance. In this project I will try to predict if someone will click-through based on information provided from the website.
@@ -23,7 +23,10 @@ My initial hypothesis is that those who are browsing the website in the middle o
 
 * Explore data in search of drivers of churn
     * Answer the following initial question
-        * 
+        * What percentage of instances result in a click-through?
+        * Does hour of the day have a relationship with clicks?
+        * Does day of the week have a relationship with clicks?
+        * Does banner position have a relationship with clicks?
         * 
 
 * Develop a model to predict the value of a house
