@@ -53,7 +53,7 @@ def split_data(df, test_size=0.15):
     It returns train, validate , and test data frames
     with validate being 0.05 bigger than test and train has the rest of the data.
     '''
-    train, test = train_test_split(df, test_size = test_size , random_state=27)
-    train, validate = train_test_split(train, test_size = (test_size + 0.05)/(1-test_size), random_state=27)
+    train, test = train_test_split(df, stratify=df['click'], test_size = test_size , random_state=27)
+    train, validate = train_test_split(train,  stratify=train['click'], test_size = (test_size + 0.05)/(1-test_size), random_state=27)
     
     return train, validate, test
