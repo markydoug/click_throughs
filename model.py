@@ -4,20 +4,44 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 import pandas as pd
 import numpy as np
+import sklearn.preprocessing as pre
 
 ###################################################################################
 ############################ PREP DATA FOR MODELING ###############################
 ###################################################################################
+
+def scale_data(train, validate, test, target):
+    '''
+    Takes in train, validate, test and the target variable.
+    Returns df with new columns with scaled data for the numeric
+    columns besides the target variable
+    '''
+    scale_features=list(train.select_dtypes(include=np.number).columns)
+    scale_features.remove(target)
+    
+    train_scaled = train.copy()
+    validate_scaled = validate.copy()
+    test_scaled = test.copy()
+    
+    minmax = pre.MinMaxScaler()
+    minmax.fit(train[scale_features])
+    
+    train_scaled[scale_features] = pd.DataFrame(minmax.transform(train[scale_features]),
+                                                  columns=train[scale_features].columns.values).set_index([train.index.values])
+                                                  
+    validate_scaled[scale_features] = pd.DataFrame(minmax.transform(validate[scale_features]),
+                                               columns=validate[scale_features].columns.values).set_index([validate.index.values])
+    
+    test_scaled[scale_features] = pd.DataFrame(minmax.transform(test[scale_features]),
+                                                 columns=test[scale_features].columns.values).set_index([test.index.values])
+    
+    return train_scaled, validate_scaled, test_scaled
 
 def get_dumdum(train, validate, test, cols_to_encode):
     '''
     Takes in a dataframe and creates dummy variables for each 
     categorical variable.
     '''
-    for col in cols_to_encode:
-        train[col] = train[col].astype('category')
-        validate[col] = validate[col].astype('category')
-        test[col] = test[col].astype('category')
 
     dummy_train = pd.get_dummies(train[cols_to_encode], dummy_na=False)
     train = pd.concat([train, dummy_train], axis=1)
@@ -28,7 +52,20 @@ def get_dumdum(train, validate, test, cols_to_encode):
     dummy_test = pd.get_dummies(test[cols_to_encode], dummy_na=False)
     test = pd.concat([test, dummy_test], axis=1)
 
-    return train, test, validate
+    return train, validate, test
+
+def pre_prep(train, validate, test, cols_to_encode, target):
+    for col in cols_to_encode:
+        train[col] = train[col].astype('category')
+        validate[col] = validate[col].astype('category')
+        test[col] = test[col].astype('category')
+    
+    train, validate, test = scale_data(train, validate, test, target)
+
+    train, validate, test = get_dumdum(train, validate, test, cols_to_encode)
+
+    return train, validate, test
+
 
 def prep_for_model(train, validate, test, target, drivers):
     '''
