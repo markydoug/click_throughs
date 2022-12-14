@@ -8,6 +8,9 @@ from sklearn.model_selection import train_test_split
 ###################################################
 
 def new_click_through_data():
+    '''
+    Goes to get the click-through data and assign column names
+    '''
     col_names = ['id', 'click', 'hour', 'C1', 'banner_pos', 'site_id', 
              'site_domain', 'site_category', 'app_id', 'app_domain', 
              'app_category', 'device_id', 'device_ip', 'device_model',
@@ -38,6 +41,11 @@ def acquire_click_through_data():
     return df
 
 def prep_data(df):
+    '''
+    Takes in df returns cleaned df with 'hour_of_day' and
+    'day_of_week' features added based on 'hour' column
+    '''
+
     df['hour'] = pd.to_datetime(df['hour'], format='%y%m%d%H')
     df['hour_of_day'] = df['hour'].dt.strftime('%H')
     df['day_of_week'] = df['hour'].dt.strftime('%A')
