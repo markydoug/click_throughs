@@ -5,9 +5,13 @@ import seaborn as sns
 from scipy import stats
 import matplotlib.ticker as mtick
 
+#days of the week in order for visualizations
 days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday', 'Sunday']
 
 def click_percentage(train):
+    '''
+    Takes in train and returns pie chart showing the percentages of click and not click
+    '''
     #split data for plotting
     train_click = train[train.click == 1]
     train_no_click = train[train.click == 0]
@@ -22,6 +26,9 @@ def click_percentage(train):
     plt.show()
 
 def hour_click_through_viz(train):
+    '''
+    Takes in train and returns visualization for clicks for each hour of the day
+    '''
     #set font size
     sns.set(font_scale=1.5)
     #set graph style
@@ -48,6 +55,11 @@ def hour_click_through_viz(train):
     plt.show()
 
 def chi_square_matrix(data, feature, target):
+    '''
+    Takes in train, feature and target variable and runs a chi^2 test
+    on each element in each feature
+    '''
+
     info = []
 
     for i in data[feature].unique():
@@ -71,6 +83,9 @@ def chi_square_matrix(data, feature, target):
     return df
 
 def day_click_through_viz(train):
+    '''
+    Takes in train and returns visualization for clicks for each day of the week
+    '''
     #set font size
     sns.set(font_scale=1.5)
     #set graph style
@@ -100,11 +115,14 @@ def day_click_through_viz(train):
     plt.show()
 
 def banner_pos_viz(train):
+    '''
+    Takes in train and returns visualization for clicks for each banner position
+    '''
     #set font size
     sns.set(font_scale=1.5)
     #set graph style
     sns.set_style('white')
-        
+
     #set size of the graphs
     fig, ax = plt.subplots(1,1, figsize=(20,8))
     fig.tight_layout(pad=4.0)
@@ -118,6 +136,9 @@ def banner_pos_viz(train):
     plt.show()
 
 def continuous_vars_ttest(train):
+    '''
+    Takes in train and returns ttest results 
+    '''
     annon_col = [f'C{i}' for i in range(14,22)]
 
     train_click = train[train.click == 1]
