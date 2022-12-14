@@ -7,11 +7,6 @@ import matplotlib.ticker as mtick
 
 days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday', 'Sunday']
 
-#set font size
-sns.set(font_scale=1.5)
-#set graph style
-sns.set_style('white')
-
 def click_percentage(train):
     #split data for plotting
     train_click = train[train.click == 1]
@@ -22,7 +17,7 @@ def click_percentage(train):
 
     # generate and show pie chart
     plt.style.use('seaborn')
-    plt.pie(values, labels=["Click", "Didn't Click"] , autopct='%.0f%%', colors=['#ffc3a0', '#c0d6e4'], textprops={'fontsize': 14})
+    plt.pie(values, labels=["Click", "Didn't Click"] , autopct='%.2f%%', colors=['#ffc3a0', '#c0d6e4'], textprops={'fontsize': 14})
     plt.title('Click-throughs make up 17% of the Train Data', size=20)
     plt.show()
 
@@ -51,8 +46,7 @@ def chi_square_matrix(data, feature, target):
     info = []
 
     for i in data[feature].unique():
-        yes_no = data[feature]==i
-        observed = pd.crosstab(yes_no, data[target])
+        observed = pd.crosstab(data[feature]==i, data[target])
         #run χ^2 test
         chi2, p, degf, expected = stats.chi2_contingency(observed)
 
@@ -107,3 +101,24 @@ def banner_pos_viz(train):
     ax.legend(["Didn't Click", 'Click'])
 
     plt.show()
+
+def continuous_vars_ttest(train):
+    annon_col = [f'C{i}' for i in range(14,22)]
+
+    train_click = train[train.click == 1]
+    train_no_click = train[train.click == 0]
+
+    stuff = []
+    for col in annon_col:
+        stat, p = stats.ttest_ind(train_click[col], train_no_click[col])
+        output = {
+            "Feature": col,
+            "t-stat": stat,
+            "p-value": p
+        }
+            
+        stuff.append(output)
+            
+    df = pd.DataFrame(stuff)
+
+    return df.set_index('Feature')
