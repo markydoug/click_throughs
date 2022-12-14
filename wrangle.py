@@ -42,8 +42,6 @@ def prep_data(df):
     df['hour_of_day'] = df['hour'].dt.strftime('%H')
     df['day_of_week'] = df['hour'].dt.strftime('%A')
     df['hour_of_day'] =  df['hour_of_day'].astype(int)
-    df['working_hours'] = (df['hour_of_day'] >= 8) & (df['hour_of_day'] < 18)
-
 
     return df
 
