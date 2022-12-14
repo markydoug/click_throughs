@@ -97,16 +97,19 @@ def decision_tree_results(X_train, y_train, X_validate, y_validate):
     Takes in train and validate data and returns decision tree model results
     '''
     # create classifier object
-    clf = DecisionTreeClassifier(max_depth=8, random_state=27)
+    tree = DecisionTreeClassifier(max_depth=10, random_state=27)
 
     #fit model on training data
-    clf.fit(X_train, y_train)
+    tree.fit(X_train, y_train)
 
-    #print results
-    print("Decision Tree")
-    print(f"Train Accuracy: {clf.score(X_train, y_train):.2%}")
-    print(f"Validate Accuracy: {clf.score(X_validate, y_validate):.2%}")
-    print(f"Difference: {(clf.score(X_train, y_train)-clf.score(X_validate, y_validate)):.2%}")
+    #run on train and validate
+    in_sample_accuracy = tree.score(X_train, y_train)
+    out_of_sample_accuracy = tree.score(X_validate, y_validate)
+
+    #calculate the difference between the two
+    acc_diff = out_of_sample_accuracy - in_sample_accuracy
+
+    return in_sample_accuracy, out_of_sample_accuracy, acc_diff
 
 
 def random_forest_results(X_train, y_train, X_validate, y_validate):
@@ -114,16 +117,19 @@ def random_forest_results(X_train, y_train, X_validate, y_validate):
     Takes in train and validate data and returns random forest model results
     '''
     # create classifier object
-    rf = RandomForestClassifier(max_depth=4, random_state=27)
+    rf = RandomForestClassifier(max_depth=10, min_samples_leaf = 12, random_state=27)
 
     #fit model on training data
     rf.fit(X_train, y_train)
 
-    #print results
-    print('Random Forest')
-    print(f"Train Accuracy: {rf.score(X_train, y_train):.2%}")
-    print(f"Validate Accuracy: {rf.score(X_validate, y_validate):.2%}")
-    print(f"Difference: {(rf.score(X_train, y_train)-rf.score(X_validate, y_validate)):.2%}")
+    #run on train and validate
+    in_sample_accuracy = rf.score(X_train, y_train)
+    out_of_sample_accuracy = rf.score(X_validate, y_validate)
+
+    #calculate the difference between the two
+    acc_diff = out_of_sample_accuracy - in_sample_accuracy
+
+    return in_sample_accuracy, out_of_sample_accuracy, acc_diff
 
 def knn_results(X_train, y_train, X_validate, y_validate):
     '''
@@ -135,11 +141,14 @@ def knn_results(X_train, y_train, X_validate, y_validate):
     #fit model on training data
     knn.fit(X_train, y_train)
 
-    #print results
-    print('KNN')
-    print(f"Train Accuracy: {knn.score(X_train, y_train):.2%}")
-    print(f"Validate Accuracy: {knn.score(X_validate, y_validate):.2%}")
-    print(f"Difference: {(knn.score(X_train, y_train)-knn.score(X_validate, y_validate)):.2%}")
+    #run on train and validate
+    in_sample_accuracy = knn.score(X_train, y_train)
+    out_of_sample_accuracy = knn.score(X_validate, y_validate)
+
+    #calculate the difference between the two
+    acc_diff = out_of_sample_accuracy - in_sample_accuracy
+
+    return in_sample_accuracy, out_of_sample_accuracy, acc_diff
 
 def log_results(X_train, y_train, X_validate, y_validate):
     '''
@@ -151,38 +160,68 @@ def log_results(X_train, y_train, X_validate, y_validate):
     #fit model on training data
     logit.fit(X_train, y_train)
 
-    #print results
-    print('Logistic Regression')
-    print(f"Train Accuracy: {logit.score(X_train, y_train):.2%}")
-    print(f"Validate Accuracy: {logit.score(X_validate, y_validate):.2%}")
-    print(f"Difference: {(logit.score(X_train, y_train)-logit.score(X_validate, y_validate)):.2%}")
+    ##run on train and validate
+    in_sample_accuracy = logit.score(X_train, y_train)
+    out_of_sample_accuracy = logit.score(X_validate, y_validate)
 
-def best_model(X_train, y_train, X_test, y_test):
+    #calculate the difference between the two
+    acc_diff = out_of_sample_accuracy - in_sample_accuracy
+
+    return in_sample_accuracy, out_of_sample_accuracy, acc_diff
+
+def compare_models(X_train, y_train, X_validate, y_validate):
+    in_sample_accuracy, out_of_sample_accuracy, acc_diff = decision_tree_results(X_train, y_train, X_validate, y_validate)
+    metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'Decision Tree')
+
+    in_sample_accuracy, out_of_sample_accuracy, acc_diff = random_forest_results(X_train, y_train, X_validate, y_validate)
+    metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'Random Forest')
+
+    in_sample_accuracy, out_of_sample_accuracy, acc_diff = knn_results(X_train, y_train, X_validate, y_validate)
+    metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'K-Nearest Neighbors')
+
+    in_sample_accuracy, out_of_sample_accuracy, acc_diff = log_results(X_train, y_train, X_validate, y_validate)
+    metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'Logistic Regression')
+
+    return metric_df
+
+def make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, model_name):
     '''
-    Takes in train and test data and returns random forest model results
+    Takes in y_train, y_train_pred, y_validate, y_validate_pred, and a df
+    returns a df of RMSE and r^2 score for the model on train and validate
     '''
-    # create classifier object
-    rf = RandomForestClassifier(max_depth=4, random_state=27)
-
-    #fit model on training data
-    rf.fit(X_train, y_train)
-
-    #run the best overall model on test data
-    print('Best Model: Random Forest')
-    print(f"Test Accuracy: {rf.score(X_test, y_test):.2%}")
+    if metric_df.size ==0:
+        metric_df = pd.DataFrame(data=[
+            {
+                'model': model_name, 
+                f'Train Accuracy': in_sample_accuracy,
+                f'Validate Accuracy': out_of_sample_accuracy,
+                f'Difference': acc_diff
+            }])
+        return metric_df
+    else:
+        return metric_df.append(
+            {
+                'model': model_name, 
+                f'Train Accuracy': in_sample_accuracy,
+                f'Validate Accuracy': out_of_sample_accuracy,
+                f'Difference': acc_diff,
+            }, ignore_index=True)
 
 def best_model_comparison(X_train, y_train, X_validate, y_validate, X_test, y_test):
     '''
     Takes in train, validate and test data and returns random forest model results
     '''
     # create classifier object
-    rf = RandomForestClassifier(max_depth=4, random_state=27)
+    rf = RandomForestClassifier(max_depth=10, min_samples_leaf = 12, random_state=27)
 
     #fit model on training data
     rf.fit(X_train, y_train)
 
-    #print results
-    print('Random Forest')
-    print(f"Train Accuracy: {rf.score(X_train, y_train):.2%}")
-    print(f"Validate Accuracy: {rf.score(X_validate, y_validate):.2%}")
-    print(f"Test Accuracy: {rf.score(X_test, y_test):.2%}")
+    results = pd.DataFrame(data=[
+            { 
+                "Train Accuracy": rf.score(X_train, y_train),
+                "Validate Accuracy": rf.score(X_validate, y_validate),
+                "Test Accuracy": rf.score(X_test, y_test)
+    }])
+
+    return results
