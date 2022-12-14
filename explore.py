@@ -22,6 +22,11 @@ def click_percentage(train):
     plt.show()
 
 def hour_click_through_viz(train):
+    #set font size
+    sns.set(font_scale=1.5)
+    #set graph style
+    sns.set_style('white')
+    
     #set size of the graphs
     fig, (ax1, ax2) = plt.subplots(1,2, figsize=(20,8))
     fig.tight_layout(pad=4.0)
@@ -66,6 +71,11 @@ def chi_square_matrix(data, feature, target):
     return df
 
 def day_click_through_viz(train):
+    #set font size
+    sns.set(font_scale=1.5)
+    #set graph style
+    sns.set_style('white')
+
     #set size of the graphs
     fig, (ax1, ax2) = plt.subplots(1,2, figsize=(20,8))
     fig.tight_layout(pad=4.0)
@@ -90,6 +100,11 @@ def day_click_through_viz(train):
     plt.show()
 
 def banner_pos_viz(train):
+    #set font size
+    sns.set(font_scale=1.5)
+    #set graph style
+    sns.set_style('white')
+        
     #set size of the graphs
     fig, ax = plt.subplots(1,1, figsize=(20,8))
     fig.tight_layout(pad=4.0)
