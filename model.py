@@ -55,6 +55,11 @@ def get_dumdum(train, validate, test, cols_to_encode):
     return train, validate, test
 
 def pre_prep(train, validate, test, cols_to_encode, target):
+    '''
+    Takes in train, validate, test, cols_to_encode, target and 
+    returns train, validate, test, with categorical features encoded
+    and numeric features scaled.
+    '''
     for col in cols_to_encode:
         train[col] = train[col].astype('category')
         validate[col] = validate[col].astype('category')
@@ -131,25 +136,6 @@ def random_forest_results(X_train, y_train, X_validate, y_validate):
 
     return in_sample_accuracy, out_of_sample_accuracy, acc_diff
 
-def knn_results(X_train, y_train, X_validate, y_validate):
-    '''
-    Takes in train and validate data and returns knn model results
-    '''
-    # create classifier object
-    knn = KNeighborsClassifier()
-
-    #fit model on training data
-    knn.fit(X_train, y_train)
-
-    #run on train and validate
-    in_sample_accuracy = knn.score(X_train, y_train)
-    out_of_sample_accuracy = knn.score(X_validate, y_validate)
-
-    #calculate the difference between the two
-    acc_diff = out_of_sample_accuracy - in_sample_accuracy
-
-    return in_sample_accuracy, out_of_sample_accuracy, acc_diff
-
 def log_results(X_train, y_train, X_validate, y_validate):
     '''
     Takes in train and validate data and returns logistic regression model results
@@ -170,14 +156,18 @@ def log_results(X_train, y_train, X_validate, y_validate):
     return in_sample_accuracy, out_of_sample_accuracy, acc_diff
 
 def compare_models(X_train, y_train, X_validate, y_validate):
+    '''
+    Takes in X_train, y_train, X_validate, y_validate and returns a df
+    of results for the models
+    '''
+    # create the metric_df as a blank dataframe
+    metric_df = pd.DataFrame() 
+
     in_sample_accuracy, out_of_sample_accuracy, acc_diff = decision_tree_results(X_train, y_train, X_validate, y_validate)
     metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'Decision Tree')
 
     in_sample_accuracy, out_of_sample_accuracy, acc_diff = random_forest_results(X_train, y_train, X_validate, y_validate)
     metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'Random Forest')
-
-    in_sample_accuracy, out_of_sample_accuracy, acc_diff = knn_results(X_train, y_train, X_validate, y_validate)
-    metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'K-Nearest Neighbors')
 
     in_sample_accuracy, out_of_sample_accuracy, acc_diff = log_results(X_train, y_train, X_validate, y_validate)
     metric_df = make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, 'Logistic Regression')
@@ -186,8 +176,9 @@ def compare_models(X_train, y_train, X_validate, y_validate):
 
 def make_metric_df(in_sample_accuracy, out_of_sample_accuracy, acc_diff, metric_df, model_name):
     '''
-    Takes in y_train, y_train_pred, y_validate, y_validate_pred, and a df
-    returns a df of RMSE and r^2 score for the model on train and validate
+    Takes in in_sample_accuracy, out_of_sample_accuracy, acc_diff, and a df
+    returns a df of accuracy score for the model on train and validate 
+    and difference between the two
     '''
     if metric_df.size ==0:
         metric_df = pd.DataFrame(data=[
