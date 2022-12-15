@@ -1,6 +1,9 @@
 # Click Through Prediction
 ## Will they click our ad?
 
+## Executive Summary
+Through exploration of the data, it was found that certain hours of the day and certain days of the week have a relationship with click-throughs. Also, the annonymized continuous features were seen to have different means when someone clicked and when someone didn't click so those were put into my model. I ran several different models and found that Random Forest could beat baseline. Until I can look more into other features, we can use this model to predict the click-through rate of future advertisements.
+
 ## Project Description
 In online advertising, click-through rate (CTR) is a very important metric for evaluating ad performance. In this project I will try to predict if someone will click-through based on information provided from the website.
 
