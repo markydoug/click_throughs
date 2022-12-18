@@ -2,7 +2,7 @@
 ## Will they click our ad?
 
 ## Executive Summary
-Through exploration of the data, it was found that certain hours of the day and certain days of the week have a relationship with click-throughs. Also, the annonymized continuous features were seen to have different means when someone clicked and when someone didn't click so those were put into my model. I ran several different models and found that Random Forest could beat baseline. Until I can look more into other features, we can use this model to predict the click-through rate of future advertisements.
+Through exploration of the data, it was found that certain hours of the day and certain days of the week have a relationship with click-throughs. Also, the anonymized continuous features were seen to have different means when someone clicked and when someone didn't click so those were put into my model. I ran several different models and found that Random Forest could beat baseline. Until I can look more into other features, we can use this model to predict the click-through rate of future advertisements.
 
 ## Project Description
 In online advertising, click-through rate (CTR) is a very important metric for evaluating ad performance. In this project I will try to predict if someone will click-through based on information provided from the website.
@@ -61,11 +61,11 @@ My initial hypothesis is that those who are browsing the website in the middle o
 * ```hour_of_day``` (0, 1, 8, 9, 11, 14, 15, 16, 18, 19, 20, 21) probably have a relationship with```clicks```.
 * Each ```day_of_week``` probably has a relationship with ```click```.
 * ```banner_pos``` (0, 1, 2, 7) probably have a relationship with ```click```.
-* Proabably a difference in means between each annoymized continuous feature (```C14```-```C21```) for those who click and don't click.
+* Proabably a difference in means between each anonymized continuous feature (```C14```-```C21```) for those who click and don't click.
 
 ### Recommendations
 * We need to invest in some cloud computing in order to run statisical tests and models on such large data sets.
-* Even though my best model only performs 0.34% better than baseline, we can use it for now as we continue to improve our model.
+* Even though my best model only performs 0.2% better than baseline, we can use it for now as we continue to improve our model.
 
 ### Next Steps
 * In the next iteration:
